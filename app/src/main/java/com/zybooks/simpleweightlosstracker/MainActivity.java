@@ -17,7 +17,7 @@ import com.zybooks.simpleweightlosstracker.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
-    Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+    private final Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,26 +27,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
-        Log.d("TAG", "Action bar set");
-
-
+        Log.d("TAG", "Actionbar set");
 
         if (navHostFragment == null) {
-            // NavHostFragment not found, handle the error
             Log.e("MainActivity", "NavHostFragment not found");
-            // Handle the error, maybe show an error message or finish the activity
         } else {
             // NavHostFragment found, initialize the NavController
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
             if (navController == null) {
-                // NavController not found, handle the error
+                // NavController not found
                 Log.e("MainActivity", "NavController not found");
-                // Handle the error, maybe show an error message or finish the activity
-            } else {
-                // NavController found, continue with your navigation setup
-                // For example, setup action bar with NavController
-                // NavigationUI.setupActionBarWithNavController(this, navController);
             }
             Log.d("TAG", "Nav controller found and set");
             appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
