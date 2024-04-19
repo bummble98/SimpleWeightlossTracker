@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".SecondFragment"
+    android:paddingBottom="100dp">
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
+        />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/weight_entry_field"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:inputType="number"
+        android:hint="Weight"
+        android:textAlignment="center"
+
+        />
+    <Button
+        android:id="@+id/button_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Weight"
+        android:textColor="@color/light_grey"
+
+        />
+
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.zybooks.simpleweightlosstracker.viewmodel;
+package com.zybooks.simpleweightlosstracker;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -6,12 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.zybooks.simpleweightlosstracker.R;
 import com.zybooks.simpleweightlosstracker.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,10 +29,30 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         Log.d("TAG", "Action bar set");
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        Log.d("TAG", "Nav controller found and set");
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+        Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+
+        if (navHostFragment == null) {
+            // NavHostFragment not found, handle the error
+            Log.e("MainActivity", "NavHostFragment not found");
+            // Handle the error, maybe show an error message or finish the activity
+        } else {
+            // NavHostFragment found, initialize the NavController
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+            if (navController == null) {
+                // NavController not found, handle the error
+                Log.e("MainActivity", "NavController not found");
+                // Handle the error, maybe show an error message or finish the activity
+            } else {
+                // NavController found, continue with your navigation setup
+                // For example, setup action bar with NavController
+                // NavigationUI.setupActionBarWithNavController(this, navController);
+            }
+            Log.d("TAG", "Nav controller found and set");
+            appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        }
     }
 
     @Override
@@ -60,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
