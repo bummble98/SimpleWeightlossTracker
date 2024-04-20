@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase;
 import com.zybooks.simpleweightlosstracker.model.Weight;
 import com.zybooks.simpleweightlosstracker.model.Profile;
 
-@Database(entities = {Weight.class, Profile.class}, version = 1)
+@Database(entities = {Weight.class, Profile.class}, version = 1, exportSchema = false)
 public abstract class WeightLogDatabase extends RoomDatabase {
 
     public abstract WeightDao weightDao();

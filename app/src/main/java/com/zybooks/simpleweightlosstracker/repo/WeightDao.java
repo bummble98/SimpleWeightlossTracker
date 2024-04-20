@@ -12,8 +12,8 @@ public interface WeightDao {
     @Query("SELECT * FROM Weight WHERE id = :id")
     LiveData<Weight> getWeight(long id);
 
-    @Query("SELECT * FROM Weight WHERE profile_id = :profileId ORDER BY id")
-    LiveData<List<Weight>> getQuestions(long profileId);
+    @Query("SELECT * FROM Weight WHERE profile_username = :profile_username ORDER BY id")
+    LiveData<List<Weight>> getWeights(String profile_username);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long addWeight(Weight weight);

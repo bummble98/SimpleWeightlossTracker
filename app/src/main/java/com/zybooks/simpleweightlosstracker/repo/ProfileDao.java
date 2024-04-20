@@ -1,5 +1,6 @@
 package com.zybooks.simpleweightlosstracker.repo;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Dao
 public interface ProfileDao {
+
     @Query("SELECT * FROM Profile WHERE username = :username")
     LiveData<Profile> getProfile(String username);
 

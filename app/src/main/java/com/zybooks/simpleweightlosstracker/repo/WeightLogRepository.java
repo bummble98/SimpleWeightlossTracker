@@ -15,6 +15,7 @@ import com.zybooks.simpleweightlosstracker.model.Profile;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 public class WeightLogRepository {
     public MutableLiveData<String> importedProfile = new MutableLiveData<>();
     private static final int NUMBER_OF_THREADS = 4;
@@ -52,45 +53,19 @@ public class WeightLogRepository {
         }
     }
 
-    /*private void addStarterData() {
-        Profile profile = new Profile("Math");
-        long profileId = mProfileDao.addProfile(profile);
 
-        Weight weight = new Weight();
-        weight.setText("What is 2 + 3?");
-        weight.setAnswer("2 + 3 = 5");
-        weight.setProfileId(profileId);
-        mWeightDao.addWeight(weight);
-
-        weight = new Weight();
-        weight.setText("What is pi?");
-        weight.setAnswer("The ratio of a circle's circumference to its diameter.");
-        weight.setProfileId(profileId);
-        mWeightDao.addWeight(weight);
-
-        profile = new Profile("History");
-        profileId = mProfileDao.addProfile(profile);
-
-        weight = new Weight();
-        weight.setText("On what date was the U.S. Declaration of Independence adopted?");
-        weight.setAnswer("July 4, 1776");
-        weight.setProfileId(profileId);
-        mWeightDao.addWeight(weight);
-
-        profile = new Profile("Computing");
-        mProfileDao.addProfile(profile);
+    public LiveData<Profile> getProfile(String username) {
+        return mProfileDao.getProfile(username);
     }
 
-     */
-
-    public Profile getProfile(String username) {
-        return mProfileDao.getProfile(username).getValue();
-    }
-
-    public List<Profile> getSubjects() {
+    public List<Profile> getProfiles() {
         return mProfileDao.getProfiles().getValue();
     }
 
+    public boolean doesProfileExist(String username) {
+        LiveData<Profile> profile = mProfileDao.getProfile(username);
+        return profile != null;
+    }
     public void addProfile(Profile profile) {
         mDatabaseExecutor.execute(() -> {
             long subjectId = mProfileDao.addProfile(profile);
@@ -104,18 +79,18 @@ public class WeightLogRepository {
         });
     }
 
-    public LiveData<Weight> getQuestion(long weightId) {
+    public LiveData<Weight> getWeight(long weightId) {
         return mWeightDao.getWeight(weightId);
     }
 
-    public LiveData<List<Weight>> getQuestions(long subjectId) {
-        return mWeightDao.getQuestions(subjectId);
+    public LiveData<List<Weight>> getWeights(String profile_username) {
+        return mWeightDao.getWeights(profile_username);
     }
 
     public void addWeight(Weight weight) {
         mDatabaseExecutor.execute(() -> {
-            long questionId = mWeightDao.addWeight(weight);
-            weight.setId(questionId);
+            long weightId = mWeightDao.addWeight(weight);
+            weight.setId(weightId);
         });
     }
 

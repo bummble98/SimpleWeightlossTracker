@@ -5,10 +5,13 @@ import static androidx.room.ForeignKey.CASCADE;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = @ForeignKey(entity = Profile.class, parentColumns = "id",
-        childColumns = "profile_id", onDelete = CASCADE))
+@Entity(foreignKeys = @ForeignKey(entity = Profile.class, parentColumns = "username",
+        childColumns = "profile_username", onDelete = CASCADE),
+        tableName = "weight",
+        indices = {@Index(value = {"profile_username"})})
 public class Weight {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -17,8 +20,8 @@ public class Weight {
     private String mDate;
     @ColumnInfo(name = "weight")
     private Integer mWeight;
-    @ColumnInfo(name = "profile_id")
-    private long mProfileId;
+    @ColumnInfo(name = "profile_username")
+    private String mProfileUsername;
 
     public void setId(long id) {
         mId = id;
@@ -40,15 +43,13 @@ public class Weight {
         return mWeight;
     }
 
-    public void setAnswer(String answer) {
-    }
-    public void setWeight(int weight) { mWeight=weight;}
+    public void setWeight(Integer weight) { mWeight=weight;}
 
-    public long getProfileId() {
-        return mProfileId;
+    public String getProfileUsername() {
+        return mProfileUsername;
     }
 
-    public void setProfileId(long profileId) {
-        mProfileId = profileId;
+    public void setProfileUsername(String profileId) {
+        mProfileUsername = profileId;
     }
 }

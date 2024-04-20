@@ -4,9 +4,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -16,40 +19,68 @@ import androidx.room.Room;
 import com.zybooks.simpleweightlosstracker.R;
 import com.zybooks.simpleweightlosstracker.databinding.ActivityMainBinding;
 import com.zybooks.simpleweightlosstracker.model.Profile;
+import com.zybooks.simpleweightlosstracker.model.Weight;
 import com.zybooks.simpleweightlosstracker.repo.WeightLogDatabase;
 import com.zybooks.simpleweightlosstracker.repo.WeightLogRepository;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
 
+public class MainActivity extends AppCompatActivity {
+    private Thread chartSetupBackgroundThread;
+    private LiveData<Profile> profileLiveData;
+    private String username;
+    private String password;
+    private MutableLiveData<List<Weight>> weightsLiveData = new MutableLiveData<>();
     private AppBarConfiguration appBarConfiguration;
-    Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("TAG", "Main activity opened");
+        Log.d("MainActivity", "Main activity opened");
         com.zybooks.simpleweightlosstracker.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        WeightLogDatabase db = Room.databaseBuilder(getApplicationContext(),
-                WeightLogDatabase.class, "WeightLogDatabase").build();
-        String username = getIntent().getStringExtra("username");
-        Profile profile = WeightLogRepository.getInstance(this).getProfile(username);
+        WeightLogRepository db = WeightLogRepository.getInstance(this);
+        String PassedUsername = getIntent().getStringExtra("profile");
         setSupportActionBar(binding.toolbar);
-        Log.d("TAG", "Actionbar set");
+        Log.d("MainActivity", "Actionbar set");
+        Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        Log.e("MainActivity", "NavHostFragment set");
 
         if (navHostFragment == null) {
             Log.e("MainActivity", "NavHostFragment not found");
         } else {
-            // NavHostFragment found, initialize the NavController
+            Log.e("MainActivity", "NavHostFragment found");
+
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
             if (navController == null) {
-                // NavController not found
                 Log.e("MainActivity", "NavController not found");
             }
             Log.d("TAG", "Nav controller found and set");
             appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         }
+        profileLiveData.observe(this, profile -> {
+            if (profile != null) {
+                Log.d("Login onCreate", "Profile live data changed");
+                username = profile.getUsername();
+                password = profile.getPassword();
+            }
+        });
+
+        weightsLiveData.observe(MainActivity.this, weights -> {
+            // TODO: 4/19/2024 set up chart functionality
+
+            TextView lbsTillGoalTextView = findViewById(R.id.lbs_till_goal_details);
+            lbsTillGoalTextView.setText(username);
+            TextView currentGoalTextView = findViewById(R.id.current_goal_details);
+            currentGoalTextView.setText(password);
+
+
+        });
+        profileLiveData = WeightLogRepository.getInstance(this).getProfile(username);
+        //chartSetupTask(username);
+
+
     }
 
     @Override
@@ -80,5 +111,23 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+    private void chartSetupTask(String username) {
+        chartSetupBackgroundThread = new Thread(() -> {
+
+            WeightLogDatabase db = Room.databaseBuilder(getApplicationContext(),
+                    WeightLogDatabase.class, "WeightLogDatabase").build();
+            LiveData<List<Weight>> weightsLiveData = db.weightDao().getWeights(username);
+
+        });
+        chartSetupBackgroundThread.start();
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (chartSetupBackgroundThread != null) {
+            chartSetupBackgroundThread.interrupt();
+        }
     }
 }

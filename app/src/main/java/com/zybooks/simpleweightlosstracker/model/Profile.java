@@ -11,15 +11,15 @@ import androidx.room.PrimaryKey;
         indices = {@Index(value = {"username"}, unique = true)}
 )
 public class Profile {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private long mId;
     @NonNull
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "username")
     private String mUsername;
     @NonNull
     @ColumnInfo(name = "password")
-    private String mPassword;
+    private final String mPassword;
+    @ColumnInfo(name = "id")
+    private long mId;
 
     public Profile( @NonNull String username, @NonNull String password) {
         mUsername = username;
