@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey;
 )
 public class Profile {
     @NonNull
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey()
     @ColumnInfo(name = "username")
     private String mUsername;
     @NonNull
