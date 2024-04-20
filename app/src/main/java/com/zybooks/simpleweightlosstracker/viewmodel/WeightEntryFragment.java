@@ -1,4 +1,4 @@
-package com.zybooks.simpleweightlosstracker;
+package com.zybooks.simpleweightlosstracker.viewmodel;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,11 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.zybooks.simpleweightlosstracker.databinding.FragmentFirstBinding;
+import com.zybooks.simpleweightlosstracker.R;
+import com.zybooks.simpleweightlosstracker.databinding.FragmentWeightEntryBinding;
 
-public class FirstFragment extends Fragment {
+public class WeightEntryFragment extends Fragment {
 
-    private FragmentFirstBinding binding;
+    private FragmentWeightEntryBinding binding;
 
     @Override
     public View onCreateView(
@@ -21,7 +22,7 @@ public class FirstFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
-        binding = FragmentFirstBinding.inflate(inflater, container, false);
+        binding = FragmentWeightEntryBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
     }
@@ -29,9 +30,9 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonFirst.setOnClickListener(v ->
-                NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
+        binding.buttonSecond.setOnClickListener(v ->
+                NavHostFragment.findNavController(WeightEntryFragment.this)
+                        .navigate(R.id.action_SecondFragment_to_FirstFragment)
         );
     }
 

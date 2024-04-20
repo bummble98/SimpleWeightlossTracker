@@ -3,23 +3,29 @@ package com.zybooks.simpleweightlosstracker.model;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(
+        tableName = "profile",
+        indices = {@Index(value = {"username"}, unique = true)}
+)
 public class Profile {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private long mId;
     @NonNull
-    @ColumnInfo(name = "text")
-    private String mText;
-    @ColumnInfo(name = "updated")
-    private long mUpdateTime;
+    @ColumnInfo(name = "username")
+    private String mUsername;
+    @NonNull
+    @ColumnInfo(name = "password")
+    private String mPassword;
 
-    public Profile(@NonNull String text) {
-        mText = text;
-        mUpdateTime = System.currentTimeMillis();
+    public Profile( @NonNull String username, @NonNull String password) {
+        mUsername = username;
+        mPassword = password;
     }
+
 
     public long getId() {
         return mId;
@@ -29,19 +35,14 @@ public class Profile {
         mId = id;
     }
 
-    public String getText() {
-        return mText;
+    public String getUsername() {
+        return mUsername;
+    }
+    public String getPassword() {
+        return mPassword;
     }
 
-    public void setText(String profile) {
-        mText = profile;
-    }
-
-    public long getUpdateTime() {
-        return mUpdateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        mUpdateTime = updateTime;
+    public void setUsername(String profile) {
+        mUsername = profile;
     }
 }

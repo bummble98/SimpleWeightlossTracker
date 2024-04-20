@@ -1,4 +1,4 @@
-package com.zybooks.simpleweightlosstracker;
+package com.zybooks.simpleweightlosstracker.viewmodel;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,13 +11,18 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.room.Room;
 
+import com.zybooks.simpleweightlosstracker.R;
 import com.zybooks.simpleweightlosstracker.databinding.ActivityMainBinding;
+import com.zybooks.simpleweightlosstracker.model.Profile;
+import com.zybooks.simpleweightlosstracker.repo.WeightLogDatabase;
+import com.zybooks.simpleweightlosstracker.repo.WeightLogRepository;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
-    private final Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+    Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +30,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TAG", "Main activity opened");
         com.zybooks.simpleweightlosstracker.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        WeightLogDatabase db = Room.databaseBuilder(getApplicationContext(),
+                WeightLogDatabase.class, "WeightLogDatabase").build();
+        String username = getIntent().getStringExtra("username");
+        Profile profile = WeightLogRepository.getInstance(this).getProfile(username);
         setSupportActionBar(binding.toolbar);
         Log.d("TAG", "Actionbar set");
 
@@ -34,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // NavHostFragment found, initialize the NavController
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
             if (navController == null) {
                 // NavController not found
                 Log.e("MainActivity", "NavController not found");

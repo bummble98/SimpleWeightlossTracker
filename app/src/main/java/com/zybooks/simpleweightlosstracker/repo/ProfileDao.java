@@ -14,10 +14,10 @@ import java.util.List;
 
 @Dao
 public interface ProfileDao {
-    @Query("SELECT * FROM Profile WHERE id = :id")
-    LiveData<Profile> getProfile(long id);
+    @Query("SELECT * FROM Profile WHERE username = :username")
+    LiveData<Profile> getProfile(String username);
 
-    @Query("SELECT * FROM Profile ORDER BY text COLLATE NOCASE")
+    @Query("SELECT * FROM Profile ORDER BY username COLLATE NOCASE")
     LiveData<List<Profile>> getProfiles();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

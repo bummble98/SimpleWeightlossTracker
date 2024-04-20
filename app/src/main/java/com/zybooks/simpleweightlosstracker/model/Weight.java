@@ -13,10 +13,10 @@ public class Weight {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private long mId;
-    @ColumnInfo(name = "text")
-    private String mText;
-    @ColumnInfo(name = "answer")
-    private String mAnswer;
+    @ColumnInfo(name = "date")
+    private String mDate;
+    @ColumnInfo(name = "weight")
+    private Integer mWeight;
     @ColumnInfo(name = "profile_id")
     private long mProfileId;
 
@@ -28,21 +28,21 @@ public class Weight {
         return mId;
     }
 
-    public String getText() {
-        return mText;
+    public String getDate() {
+        return mDate;
     }
 
-    public void setText(String text) {
-        mText = text;
+    public void setDate(String text) {
+        mDate = text;
     }
 
-    public String getAnswer() {
-        return mAnswer;
+    public Integer getWeight() {
+        return mWeight;
     }
 
     public void setAnswer(String answer) {
-        mAnswer = answer;
     }
+    public void setWeight(int weight) { mWeight=weight;}
 
     public long getProfileId() {
         return mProfileId;

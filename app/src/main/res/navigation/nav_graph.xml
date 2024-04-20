@@ -3,26 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/MainFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.zybooks.simpleweightlosstracker.FirstFragment"
+        android:id="@+id/MainFragment"
+        android:name="com.zybooks.simpleweightlosstracker.viewmodel.MainFragment"
         android:label="Home Screen"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/fragment_main">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/WeightEntryFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.zybooks.simpleweightlosstracker.SecondFragment"
+        android:id="@+id/WeightEntryFragment"
+        android:name="com.zybooks.simpleweightlosstracker.viewmodel.WeightEntryFragment"
         android:label="Add Weight Screen"
-        tools:layout="@layout/fragment_second">
+        tools:layout="@layout/fragment_weight_entry">
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            app:destination="@id/MainFragment" />
     </fragment>
 </navigation>

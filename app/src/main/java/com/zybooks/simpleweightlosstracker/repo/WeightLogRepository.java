@@ -36,7 +36,7 @@ public class WeightLogRepository {
             @Override
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
-                mDatabaseExecutor.execute(() -> addStarterData());
+                //mDatabaseExecutor.execute(() -> addStarterData());
             }
         };
 
@@ -48,11 +48,11 @@ public class WeightLogRepository {
         mWeightDao = database.weightDao();
 
         if (mProfileDao.getProfiles().isInitialized()) {
-            addStarterData();
+            //addStarterData();
         }
     }
 
-    private void addStarterData() {
+    /*private void addStarterData() {
         Profile profile = new Profile("Math");
         long profileId = mProfileDao.addProfile(profile);
 
@@ -81,15 +81,17 @@ public class WeightLogRepository {
         mProfileDao.addProfile(profile);
     }
 
-    public Profile getSubject(long subjectId) {
-        return mProfileDao.getProfile(subjectId).getValue();
+     */
+
+    public Profile getProfile(String username) {
+        return mProfileDao.getProfile(username).getValue();
     }
 
     public List<Profile> getSubjects() {
         return mProfileDao.getProfiles().getValue();
     }
 
-    public void addSubject(Profile profile) {
+    public void addProfile(Profile profile) {
         mDatabaseExecutor.execute(() -> {
             long subjectId = mProfileDao.addProfile(profile);
             profile.setId(subjectId);
@@ -117,15 +119,15 @@ public class WeightLogRepository {
         });
     }
 
-    public void updateQuestion(Weight weight) {
+    public void updateWeight(Weight weight) {
         mDatabaseExecutor.execute(() -> {
-            mWeightDao.updateQuestion(weight);
+            mWeightDao.updateWeight(weight);
         });
     }
 
     public void deleteQuestion(Weight weight) {
         mDatabaseExecutor.execute(() -> {
-            mWeightDao.deleteQuestion(weight);
+            mWeightDao.deleteWeight(weight);
         });
     }
 

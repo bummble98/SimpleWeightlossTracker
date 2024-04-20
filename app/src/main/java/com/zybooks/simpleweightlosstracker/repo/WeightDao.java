@@ -19,8 +19,8 @@ public interface WeightDao {
     long addWeight(Weight weight);
 
     @Update
-    void updateQuestion(Weight weight);
+    void updateWeight(Weight weight);
 
     @Delete
-    void deleteQuestion(Weight weight);
+    void deleteWeight(Weight weight);
 }
