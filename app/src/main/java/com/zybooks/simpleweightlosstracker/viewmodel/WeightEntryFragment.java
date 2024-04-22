@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.zybooks.simpleweightlosstracker.R;
@@ -30,10 +31,10 @@ public class WeightEntryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonSecond.setOnClickListener(v ->
-                NavHostFragment.findNavController(WeightEntryFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment)
-        );
+        binding.buttonSecond.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(WeightEntryFragment.this);
+            navController.navigate(R.id.action_SecondFragment_to_FirstFragment);
+        });
     }
 
     @Override

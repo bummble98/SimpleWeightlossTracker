@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
@@ -13,6 +14,7 @@ import com.zybooks.simpleweightlosstracker.model.Weight;
 import com.zybooks.simpleweightlosstracker.model.Profile;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,8 +51,20 @@ public class WeightLogRepository {
         mWeightDao = database.weightDao();
 
         if (mProfileDao.getProfiles().isInitialized()) {
-            //addStarterData();
+            //TODO: remove debug profile
+            this.addProfile(new Profile("debug","debug"));
         }
+    }
+    public LiveData<Profile> checkCredentials(String username, String password) {
+        return Transformations.switchMap(getProfile(username), profile -> {
+            MutableLiveData<Profile> resultLiveData = new MutableLiveData<>();
+            if (profile != null && profile.getPassword().equals(password)) {
+                resultLiveData.setValue(profile);
+            } else {
+                resultLiveData.setValue(null);
+            }
+            return resultLiveData;
+        });
     }
 
 
@@ -62,9 +76,8 @@ public class WeightLogRepository {
         return mProfileDao.getProfiles().getValue();
     }
 
-    public boolean doesProfileExist(String username) {
-        LiveData<Profile> profile = mProfileDao.getProfile(username);
-        return profile != null;
+    public LiveData<Boolean> doesProfileExist(String username) {
+        return Transformations.map(mProfileDao.getProfile(username), Objects::nonNull);
     }
     public void addProfile(Profile profile) {
         mDatabaseExecutor.execute(() -> {
@@ -73,10 +86,8 @@ public class WeightLogRepository {
         });
     }
 
-    public void deleteSubject(Profile profile) {
-        mDatabaseExecutor.execute(() -> {
-            mProfileDao.deleteProfile(profile);
-        });
+    public void deleteProfile(Profile profile) {
+        mDatabaseExecutor.execute(() -> mProfileDao.deleteProfile(profile));
     }
 
     public LiveData<Weight> getWeight(long weightId) {
@@ -95,15 +106,11 @@ public class WeightLogRepository {
     }
 
     public void updateWeight(Weight weight) {
-        mDatabaseExecutor.execute(() -> {
-            mWeightDao.updateWeight(weight);
-        });
+        mDatabaseExecutor.execute(() -> mWeightDao.updateWeight(weight));
     }
 
-    public void deleteQuestion(Weight weight) {
-        mDatabaseExecutor.execute(() -> {
-            mWeightDao.deleteWeight(weight);
-        });
+    public void deleteWeight(Weight weight) {
+        mDatabaseExecutor.execute(() -> mWeightDao.deleteWeight(weight));
     }
 
 }

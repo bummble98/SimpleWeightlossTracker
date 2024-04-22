@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.room.Room;
@@ -33,32 +34,34 @@ public class MainActivity extends AppCompatActivity {
     private MutableLiveData<List<Weight>> weightsLiveData = new MutableLiveData<>();
     private AppBarConfiguration appBarConfiguration;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("MainActivity", "Main activity opened");
         com.zybooks.simpleweightlosstracker.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        WeightLogRepository db = WeightLogRepository.getInstance(this);
-        String PassedUsername = getIntent().getStringExtra("profile");
         setSupportActionBar(binding.toolbar);
         Log.d("MainActivity", "Actionbar set");
-        Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        Log.e("MainActivity", "NavHostFragment set");
 
-        if (navHostFragment == null) {
-            Log.e("MainActivity", "NavHostFragment not found");
-        } else {
-            Log.e("MainActivity", "NavHostFragment found");
 
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-            if (navController == null) {
-                Log.e("MainActivity", "NavController not found");
-            }
+        Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
+        Log.d("MainActivity", "NavHostFragment set");
+
+        if (navHostFragment instanceof NavHostFragment) {
+            NavController navController = ((NavHostFragment) navHostFragment).getNavController();
             Log.d("TAG", "Nav controller found and set");
             appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+            Log.d("TAG", "AppBar set");
+        } else {
+            Log.e("MainActivity", "NavHostFragment not found");
         }
+
+
+        WeightLogRepository repository = WeightLogRepository.getInstance(this);
+        String passedUsername = getIntent().getStringExtra("profile");
+        profileLiveData = repository.getProfile(passedUsername);
         profileLiveData.observe(this, profile -> {
             if (profile != null) {
                 Log.d("Login onCreate", "Profile live data changed");
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
                 password = profile.getPassword();
             }
         });
+
+
 
         weightsLiveData.observe(MainActivity.this, weights -> {
             // TODO: 4/19/2024 set up chart functionality
@@ -108,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
@@ -117,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
             WeightLogDatabase db = Room.databaseBuilder(getApplicationContext(),
                     WeightLogDatabase.class, "WeightLogDatabase").build();
-            LiveData<List<Weight>> weightsLiveData = db.weightDao().getWeights(username);
+            weightsLiveData = (MutableLiveData<List<Weight>>) db.weightDao().getWeights(username);
 
         });
         chartSetupBackgroundThread.start();
@@ -130,4 +135,5 @@ public class MainActivity extends AppCompatActivity {
             chartSetupBackgroundThread.interrupt();
         }
     }
+
 }

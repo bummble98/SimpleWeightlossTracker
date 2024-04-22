@@ -1,7 +1,7 @@
 package com.zybooks.simpleweightlosstracker.repo;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;

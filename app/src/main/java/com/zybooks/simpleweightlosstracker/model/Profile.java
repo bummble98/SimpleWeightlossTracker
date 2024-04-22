@@ -7,7 +7,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(
-        tableName = "profile",
+        tableName = "Profile",
         indices = {@Index(value = {"username"}, unique = true)}
 )
 public class Profile {

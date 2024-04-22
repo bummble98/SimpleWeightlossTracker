@@ -23,6 +23,8 @@
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/MainFragment" />
+            app:destination="@id/MainFragment"
+            app:popUpTo="@id/MainFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
