@@ -23,6 +23,15 @@ public class Weight {
     @ColumnInfo(name = "profile_username")
     private String mProfileUsername;
 
+    public Weight(){}
+
+    public Weight(String date, Integer weight, String username){
+        mDate = date;
+        mWeight = weight;
+        mProfileUsername = username;
+
+    }
+
     public void setId(long id) {
         mId = id;
     }

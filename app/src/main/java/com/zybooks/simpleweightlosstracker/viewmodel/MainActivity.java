@@ -1,12 +1,15 @@
 package com.zybooks.simpleweightlosstracker.viewmodel;
 
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -16,7 +19,11 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.room.Room;
+import com.github.mikephil.charting.charts.LineChart;
 
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.zybooks.simpleweightlosstracker.R;
 import com.zybooks.simpleweightlosstracker.databinding.ActivityMainBinding;
 import com.zybooks.simpleweightlosstracker.model.Profile;
@@ -24,16 +31,15 @@ import com.zybooks.simpleweightlosstracker.model.Weight;
 import com.zybooks.simpleweightlosstracker.repo.WeightLogDatabase;
 import com.zybooks.simpleweightlosstracker.repo.WeightLogRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private Thread chartSetupBackgroundThread;
-    private LiveData<Profile> profileLiveData;
     private String username;
     private String password;
     private MutableLiveData<List<Weight>> weightsLiveData = new MutableLiveData<>();
     private AppBarConfiguration appBarConfiguration;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         WeightLogRepository repository = WeightLogRepository.getInstance(this);
         String passedUsername = getIntent().getStringExtra("profile");
-        profileLiveData = repository.getProfile(passedUsername);
+        LiveData<Profile> profileLiveData = repository.getProfile(passedUsername);
         profileLiveData.observe(this, profile -> {
             if (profile != null) {
                 Log.d("Login onCreate", "Profile live data changed");
@@ -69,9 +75,6 @@ public class MainActivity extends AppCompatActivity {
                 password = profile.getPassword();
             }
         });
-
-
-
         weightsLiveData.observe(MainActivity.this, weights -> {
             // TODO: 4/19/2024 set up chart functionality
 
@@ -79,12 +82,8 @@ public class MainActivity extends AppCompatActivity {
             lbsTillGoalTextView.setText(username);
             TextView currentGoalTextView = findViewById(R.id.current_goal_details);
             currentGoalTextView.setText(password);
-
-
         });
-        profileLiveData = WeightLogRepository.getInstance(this).getProfile(username);
         //chartSetupTask(username);
-
 
     }
 
@@ -105,11 +104,14 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.edit_weights_action) {
+        if (id == R.id.delete_weights_action) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public String getUsername(){
+        return username;
     }
 
     public boolean onSupportNavigateUp() {
@@ -118,15 +120,45 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
     private void chartSetupTask(String username) {
+        LineChart lineChart = findViewById(R.id.lineChart);
         chartSetupBackgroundThread = new Thread(() -> {
-
             WeightLogDatabase db = Room.databaseBuilder(getApplicationContext(),
                     WeightLogDatabase.class, "WeightLogDatabase").build();
             weightsLiveData = (MutableLiveData<List<Weight>>) db.weightDao().getWeights(username);
 
+            ArrayList<Entry> entries = new ArrayList<>();
+            float xValue1 = 0;
+            float yValue1 = 0;
+            entries.add(new Entry(xValue1, yValue1)); // Add your data points here
+            float xValue2 = 0;
+            float yValue2 = 0;
+            entries.add(new Entry(xValue2, yValue2));
+            // Add more data points as needed
+            LineDataSet dataSet = new LineDataSet(entries, "Label"); // "Label" is the name of the dataset
+            dataSet.setColor(Color.BLUE); // Set line color
+            dataSet.setValueTextColor(Color.RED); // Set text color
+            LineData lineData = new LineData(dataSet);
+            lineChart.setData(lineData);
+            lineChart.getDescription().setText("WeightLoss Chart");
+            //lineChart.getXAxis().setValueFormatter(new XAxisValueFormatter());
+            lineChart.invalidate();
         });
         chartSetupBackgroundThread.start();
 
+
+
+
+    }
+
+    private void showExitConfirmationDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Exit")
+                .setMessage("Are you sure you want to exit?")
+                .setPositiveButton("Yes", (dialogInterface, i) -> finishAffinity())
+                .setNegativeButton("No", null)
+                .show();
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(MainActivity.this, R.color.md_theme_dark_primary));
+        alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(MainActivity.this, R.color.md_theme_dark_primary));
     }
     @Override
     protected void onDestroy() {

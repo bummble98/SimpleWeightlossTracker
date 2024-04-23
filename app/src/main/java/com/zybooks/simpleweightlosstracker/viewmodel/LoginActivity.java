@@ -21,8 +21,6 @@ public class LoginActivity extends AppCompatActivity {
     private WeightLogRepository repository;
 
     private MutableLiveData<Profile> profileLiveData = new MutableLiveData<>(new Profile("", ""));
-    private String username;
-    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.putExtra("profile", inputUsername);
                                 startActivity(intent);
+                                finish();
                             }
 
                         });
@@ -95,20 +94,9 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("profile", inputUsername);
                     startActivity(intent);
+                    finish();
                 }
             });
-        }
-    }
-    private void onChanged(Profile profile) {
-        if (Objects.equals(profile.getUsername(), "") || Objects.equals(profile.getPassword(), "")) {
-            Log.d("profileLiveData onChanged", "Profile live data and variables reset");
-            username = null;
-            password = null;
-
-        } else {
-            Log.d("profileLiveData onChanged", "Profile live data and variables set");
-            username = profile.getUsername();
-            password = profile.getPassword();
         }
     }
 }
